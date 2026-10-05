@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C41230">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OS Inbound">
+<title>One Source Inbound Scan | LWH</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <button id="backBtn" class="back" hidden aria-label="Back to loads">&lsaquo; Loads</button>
+    <div class="brand">
+      <span class="brand-co">LWH</span>
+      <span class="brand-app">One Source Inbound</span>
+    </div>
+    <div class="pills">
+      <span id="netPill" class="pill">Checking</span>
+      <span id="offlinePill" class="pill pill-warn">Not offline-ready</span>
+    </div>
+  </header>
+  <div id="updateBar" class="update-bar" hidden>
+    A new version is loaded. <button id="reloadBtn" class="btn btn-small">Reload</button>
+  </div>
+
+  <!-- HOME -->
+  <main id="viewHome" class="view">
+    <div class="home-actions">
+      <button id="newLoadBtn" class="btn btn-primary btn-xl">Start new load</button>
+    </div>
+    <h2 class="section-title">Loads on this device</h2>
+    <div id="loadList" class="load-list"></div>
+    <section class="tools">
+      <h2 class="section-title">Backup and export</h2>
+      <p class="hint">Scans are saved on this device only. Back up at the end of each shift, and use Restore to combine loads from another device.</p>
+      <div class="tool-row">
+        <button id="exportAllBtn" class="btn">Export all loads (CSV)</button>
+        <button id="backupBtn" class="btn">Back up (file)</button>
+        <label class="btn" for="restoreFile">Restore / merge backup</label>
+        <input id="restoreFile" type="file" accept=".json,application/json" hidden>
+      </div>
+      <p class="meta" id="storageInfo"></p>
+    </section>
+  </main>
+
+  <!-- LOAD HEADER FORM -->
+  <main id="viewForm" class="view" hidden>
+    <h2 id="formTitle" class="section-title">New load</h2>
+    <p class="hint">These stay the same for every pallet on the load. Each field accepts a scan.</p>
+    <form id="loadForm" autocomplete="off" novalidate>
+      <label class="field"><span>Load number or BOL</span>
+        <input id="fLoad" class="big" required enterkeyhint="next"></label>
+      <label class="field"><span>Carrier name</span>
+        <input id="fCarrier" class="big" required enterkeyhint="next"></label>
+      <label class="field"><span>Item number</span>
+        <input id="fItem" class="big" required enterkeyhint="next"></label>
+      <label class="field"><span>Bin class</span>
+        <input id="fBin" class="big" required enterkeyhint="done"></label>
+      <p id="formMsg" class="msg" role="alert"></p>
+      <div class="tool-row">
+        <button type="submit" id="formSave" class="btn btn-primary btn-xl">Save and start scanning</button>
+        <button type="button" id="formCancel" class="btn">Cancel</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- SCAN -->
+  <main id="viewScan" class="view" hidden>
+    <section class="load-head">
+      <div class="lh-grid">
+        <div><span class="lbl">Load / BOL</span><strong id="hLoad"></strong></div>
+        <div><span class="lbl">Carrier</span><strong id="hCarrier"></strong></div>
+        <div><span class="lbl">Item</span><strong id="hItem"></strong></div>
+        <div><span class="lbl">Bin class</span><strong id="hBin"></strong></div>
+      </div>
+      <div class="lh-stats">
+        <div class="stat"><strong id="sPallets">0</strong><span>pallets</span></div>
+        <div class="stat"><strong id="sQty">0</strong><span>total qty</span></div>
+        <button id="editHeadBtn" class="btn btn-small">Edit load info</button>
+      </div>
+    </section>
+
+    <div id="closedBanner" class="closed-banner" hidden>This load is closed. Reopen it to add pallets.</div>
+
+    <section id="scanBox" class="scan-box">
+      <div class="scan-field" data-step="pallet">
+        <label for="inPallet">Pallet ID</label>
+        <div class="in-row">
+          <input id="inPallet" class="scan-in" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="next">
+          <button class="cam-btn" data-target="inPallet" aria-label="Scan Pallet ID with camera">Camera</button>
+        </div>
+      </div>
+      <div class="scan-field" data-step="pgid">
+        <label for="inPgid">PGID</label>
+        <div class="in-row">
+          <input id="inPgid" class="scan-in" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="next">
+          <button class="cam-btn" data-target="inPgid" aria-label="Scan PGID with camera">Camera</button>
+        </div>
+      </div>
+      <div class="scan-field" data-step="qty">
+        <label for="inQty">QTY</label>
+        <div class="in-row">
+          <input id="inQty" class="scan-in" autocomplete="off" inputmode="numeric" spellcheck="false" enterkeyhint="done">
+          <button class="cam-btn" data-target="inQty" aria-label="Scan QTY with camera">Camera</button>
+        </div>
+      </div>
+      <p id="scanMsg" class="msg scan-msg" role="status" aria-live="assertive">Scan the Pallet ID to begin.</p>
+      <button id="clearRowBtn" class="btn btn-small">Clear this pallet and start over</button>
+    </section>
+
+    <section class="actions">
+      <button id="printBtn" class="btn btn-primary">Print scan sheet</button>
+      <button id="csvBtn" class="btn">Export CSV</button>
+      <button id="closeLoadBtn" class="btn">Close load</button>
+      <button id="deleteLoadBtn" class="btn btn-danger">Delete load</button>
+    </section>
+
+    <h2 class="section-title">Scanned pallets <span class="meta">newest first</span></h2>
+    <div class="table-wrap">
+      <table class="pallets">
+        <thead><tr><th>#</th><th>Pallet ID</th><th>PGID</th><th class="num">QTY</th><th>Time</th><th></th></tr></thead>
+        <tbody id="palletRows"></tbody>
+      </table>
+    </div>
+    <p id="emptyPallets" class="empty">No pallets yet. Scan the first Pallet ID above.</p>
+  </main>
+
+  <footer class="foot"><span id="verText"></span></footer>
+</div>
+
+<!-- CAMERA OVERLAY -->
+<div id="camOverlay" class="cam-overlay" hidden>
+  <div class="cam-card">
+    <div class="cam-head"><strong id="camTitle">Scan</strong><button id="camClose" class="btn btn-small">Cancel</button></div>
+    <div id="camReader"></div>
+    <p class="hint" id="camHint">Hold the barcode flat and fill the box.</p>
+  </div>
+</div>
+
+<!-- PRINT AREA -->
+<div id="printArea" aria-hidden="true"></div>
+
+<script src="vendor/JsBarcode.code128.min.js"></script>
+<script src="vendor/html5-qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
