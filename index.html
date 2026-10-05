@@ -22,6 +22,7 @@
     </div>
     <div class="pills">
       <span id="netPill" class="pill">Checking</span>
+      <span id="syncPill" class="pill pill-warn">Sync off</span>
       <span id="offlinePill" class="pill pill-warn">Not offline-ready</span>
     </div>
   </header>
@@ -37,8 +38,23 @@
     <h2 class="section-title">Loads on this device</h2>
     <div id="loadList" class="load-list"></div>
     <section class="tools">
+      <h2 class="section-title">Sync between devices</h2>
+      <p class="hint">Every scan saves on this device first. When there's signal, loads sync to the server so all devices see the same loads.</p>
+      <div class="sync-grid">
+        <label class="field"><span>Sync code</span>
+          <input id="syncCode" class="big" type="password" inputmode="numeric" autocomplete="off"></label>
+        <label class="field"><span>This device's name</span>
+          <input id="deviceName" class="big" autocomplete="off" maxlength="60" placeholder="Dock laptop, Ronnie's phone"></label>
+      </div>
+      <div class="tool-row">
+        <button id="saveSyncBtn" class="btn btn-primary">Save sync settings</button>
+        <button id="syncNowBtn" class="btn">Sync now</button>
+      </div>
+      <p class="meta" id="syncStatus"></p>
+    </section>
+    <section class="tools">
       <h2 class="section-title">Backup and export</h2>
-      <p class="hint">Scans are saved on this device only. Back up at the end of each shift, and use Restore to combine loads from another device.</p>
+      <p class="hint">Use a backup file if a device can't sync. Restore merges loads and skips pallets already here.</p>
       <div class="tool-row">
         <button id="exportAllBtn" class="btn">Export all loads (CSV)</button>
         <button id="backupBtn" class="btn">Back up (file)</button>

@@ -1,4 +1,4 @@
-# LWH One Source Inbound Scan (v1.0.0)
+# LWH One Source Inbound Scan (v1.1.0)
 
 Offline-first PWA for receiving One Source inbound trailers when the WMS/network is down.
 Capture load info once, scan Pallet ID -> PGID -> QTY for each pallet, then print a scan
@@ -24,10 +24,20 @@ on phones.
   Use Save as PDF if no printer is reachable.
 - **Close load** locks it; Reopen if needed. Delete requires typing the load number.
 
+## Sync between devices (v1.1)
+Every scan saves on the device first, then syncs to Supabase (LWH Companion project) when there's
+signal: right after each scan, every 20 seconds, and whenever the app comes back to the screen.
+- On each device: Home -> Sync between devices -> enter the sync code and a device name -> Save.
+- Header pill: Synced / N to sync / Sync off / Sync code problem.
+- Loads, pallets, removals, close/reopen and deletes all sync. The duplicate Pallet ID check covers
+  loads from every synced device.
+- If signal drops, keep scanning. Changes queue on the device and upload when it reconnects.
+- Database details and the SQL to change the code are in `sql/README-sql.md`.
+
 ## Data
-Stored only on that device (IndexedDB, mirrored to localStorage). Clearing browser data deletes it.
+Stored on the device (IndexedDB, mirrored to localStorage) and, with sync on, in Supabase.
 - **Export CSV**: per load or all loads.
-- **Back up (file)** / **Restore / merge backup**: move loads between devices (e.g. phone -> laptop).
+- **Back up (file)** / **Restore / merge backup**: fallback for a device that can't sync.
   Merges by load and skips pallets already present.
 
 ## Updating

@@ -49,6 +49,7 @@ button, input, label.btn { font-family: inherit; }
 }
 .pill-ok { background: var(--white); color: var(--ok); }
 .pill-warn { background: #ffd34d; color: var(--black); }
+.pill-bad { background: var(--white); color: var(--bad); outline: 2px solid var(--black); }
 .update-bar {
   background: var(--black); color: var(--white); padding: 10px 16px;
   display: flex; gap: 12px; align-items: center;
@@ -156,6 +157,9 @@ table.pallets { width: 100%; border-collapse: collapse; font-size: 17px; }
 .del-btn { white-space: nowrap; border: 2px solid var(--bad); color: var(--bad); background: var(--white); border-radius: 6px; font-weight: 700; padding: 6px 10px; cursor: pointer; font-size: 15px; }
 
 .tools { margin-top: 10px; }
+.sync-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.sync-err { color: var(--bad); font-weight: 700; }
+.li-wait { color: var(--red); font-weight: 700; }
 .foot { text-align: center; color: var(--muted); font-size: 14px; padding: 24px 0 30px; }
 
 /* Camera */
@@ -168,6 +172,7 @@ table.pallets { width: 100%; border-collapse: collapse; font-size: 17px; }
   body { font-size: 17px; }
   .brand-app { font-size: 17px; }
   .lh-grid { grid-template-columns: 1fr 1fr; }
+  .sync-grid { grid-template-columns: 1fr; }
   .cam-btn { min-width: 80px; }
   .pallets th:nth-child(5), .pallets td:nth-child(5) { display: none; }
 }

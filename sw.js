@@ -1,5 +1,5 @@
 /* Offline cache for One Source Inbound. Bump VERSION with every deploy (must match APP_VERSION in app.js). */
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const CACHE = 'os-inbound-' + VERSION;
 const ASSETS = [
   './', 'index.html', 'app.css', 'app.js', 'manifest.json',
