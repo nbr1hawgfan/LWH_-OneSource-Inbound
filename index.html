@@ -2,203 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#C41230">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="OS Inbound">
-<title>One Source Inbound Scan | LWH</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="app.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Source Inbound has moved — LWH</title>
+<meta http-equiv="refresh" content="4;url=https://nbr1hawgfan.github.io/LWH-Warehouse-Toolkit/?view=osInbound">
+<style>
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f2f2f4;color:#111}
+  .bar{background:#c8102e;color:#fff;padding:18px 20px;font-weight:800;font-size:20px}
+  .card{max-width:560px;margin:28px auto;background:#fff;border:1px solid #ddd;border-top:5px solid #c8102e;padding:22px}
+  a.btn{display:inline-block;background:#c8102e;color:#fff;text-decoration:none;font-weight:800;padding:14px 20px;margin-top:10px}
+  p{line-height:1.5}
+</style>
 </head>
 <body>
-<div id="app">
-  <header class="topbar">
-    <button id="backBtn" class="back" hidden aria-label="Back to loads">&lsaquo; Loads</button>
-    <div class="brand">
-      <span class="brand-co">LWH</span>
-      <span class="brand-app">One Source Inbound</span>
-    </div>
-    <div class="pills">
-      <span id="netPill" class="pill">Checking</span>
-      <span id="syncPill" class="pill pill-warn">Sync off</span>
-      <span id="offlinePill" class="pill pill-warn">Not offline-ready</span>
-    </div>
-  </header>
-  <div id="updateBar" class="update-bar" hidden>
-    A new version is loaded. <button id="reloadBtn" class="btn btn-small">Reload</button>
-  </div>
-
-  <!-- HOME -->
-  <main id="viewHome" class="view">
-    <div class="home-actions">
-      <button id="newLoadBtn" class="btn btn-primary btn-xl">Start new load</button>
-    </div>
-    <h2 class="section-title">Loads on this device</h2>
-    <div id="loadList" class="load-list"></div>
-    <section class="tools">
-      <h2 class="section-title">Sync between devices</h2>
-      <p class="hint">Every scan saves on this device first. When there's signal, loads sync to the server so all devices see the same loads.</p>
-      <div class="sync-grid">
-        <label class="field"><span>Sync code</span>
-          <input id="syncCode" class="big" type="password" inputmode="numeric" autocomplete="off"></label>
-        <label class="field"><span>This device's name</span>
-          <input id="deviceName" class="big" autocomplete="off" maxlength="60" placeholder="Dock laptop, Ronnie's phone"></label>
-      </div>
-      <div class="tool-row">
-        <button id="saveSyncBtn" class="btn btn-primary">Save sync settings</button>
-        <button id="syncNowBtn" class="btn">Sync now</button>
-      </div>
-      <p class="meta" id="syncStatus"></p>
-    </section>
-    <section class="tools">
-      <h2 class="section-title">Backup and export</h2>
-      <p class="hint">Use a backup file if a device can't sync. Restore merges loads and skips pallets already here.</p>
-      <div class="tool-row">
-        <button id="exportAllBtn" class="btn">Export all loads (CSV)</button>
-        <button id="backupBtn" class="btn">Back up (file)</button>
-        <label class="btn" for="restoreFile">Restore / merge backup</label>
-        <input id="restoreFile" type="file" accept=".json,application/json" hidden>
-      </div>
-      <p class="meta" id="storageInfo"></p>
-    </section>
-  </main>
-
-  <!-- LOAD HEADER FORM -->
-  <main id="viewForm" class="view" hidden>
-    <h2 id="formTitle" class="section-title">New load</h2>
-    <p class="hint">These stay the same for every pallet on the load. Each field accepts a scan.</p>
-    <form id="loadForm" autocomplete="off" novalidate>
-      <label class="field"><span>Load number or BOL</span>
-        <input id="fLoad" class="big" required enterkeyhint="next"></label>
-      <label class="field"><span>Carrier name</span>
-        <input id="fCarrier" class="big" required enterkeyhint="next"></label>
-      <label class="field"><span>Item number</span>
-        <input id="fItem" class="big" required enterkeyhint="next"></label>
-      <label class="field"><span>Bin class</span>
-        <input id="fBin" class="big" required enterkeyhint="done"></label>
-      <p id="formMsg" class="msg" role="alert"></p>
-      <div class="tool-row">
-        <button type="submit" id="formSave" class="btn btn-primary btn-xl">Save and start scanning</button>
-        <button type="button" id="formCancel" class="btn">Cancel</button>
-      </div>
-    </form>
-  </main>
-
-  <!-- SCAN -->
-  <main id="viewScan" class="view" hidden>
-    <section class="load-head">
-      <div class="lh-grid">
-        <div><span class="lbl">Load / BOL</span><strong id="hLoad"></strong></div>
-        <div><span class="lbl">Carrier</span><strong id="hCarrier"></strong></div>
-        <div><span class="lbl">Item</span><strong id="hItem"></strong></div>
-        <div><span class="lbl">Bin class</span><strong id="hBin"></strong></div>
-      </div>
-      <div class="lh-stats">
-        <div class="stat"><strong id="sPallets">0</strong><span>pallets</span></div>
-        <div class="stat"><strong id="sQty">0</strong><span>total qty</span></div>
-        <button id="editHeadBtn" class="btn btn-small">Edit load info</button>
-      </div>
-    </section>
-
-    <div id="closedBanner" class="closed-banner" hidden>This load is closed. Reopen it to add pallets.</div>
-
-    <section id="scanBox" class="scan-box">
-      <div class="scan-field" data-step="pallet">
-        <label for="inPallet">Pallet ID</label>
-        <div class="in-row">
-          <input id="inPallet" class="scan-in" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="next">
-          <button class="cam-btn" data-target="inPallet" aria-label="Scan Pallet ID with camera">Camera</button>
-        </div>
-      </div>
-      <div class="scan-field" data-step="pgid">
-        <label for="inPgid">PGID</label>
-        <div class="in-row">
-          <input id="inPgid" class="scan-in" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="next">
-          <button class="cam-btn" data-target="inPgid" aria-label="Scan PGID with camera">Camera</button>
-        </div>
-      </div>
-      <div class="scan-field" data-step="qty">
-        <label for="inQty">QTY</label>
-        <div class="in-row">
-          <input id="inQty" class="scan-in" autocomplete="off" inputmode="numeric" spellcheck="false" enterkeyhint="done">
-          <button class="cam-btn" data-target="inQty" aria-label="Scan QTY with camera">Camera</button>
-        </div>
-      </div>
-      <p id="scanMsg" class="msg scan-msg" role="status" aria-live="assertive">Scan the Pallet ID to begin.</p>
-      <button id="clearRowBtn" class="btn btn-small">Clear this pallet and start over</button>
-    </section>
-
-    <section class="actions">
-      <button id="printBtn" class="btn btn-primary">Print scan sheet</button>
-      <button id="csvBtn" class="btn">Export CSV</button>
-      <button id="closeLoadBtn" class="btn">Close load</button>
-      <button id="deleteLoadBtn" class="btn btn-danger">Delete load</button>
-    </section>
-
-    <h2 class="section-title">Scanned pallets <span class="meta">newest first</span></h2>
-    <div class="table-wrap">
-      <table class="pallets">
-        <thead><tr><th>#</th><th>Pallet ID</th><th>PGID</th><th class="num">QTY</th><th>Time</th><th></th></tr></thead>
-        <tbody id="palletRows"></tbody>
-      </table>
-    </div>
-    <p id="emptyPallets" class="empty">No pallets yet. Scan the first Pallet ID above.</p>
-  </main>
-
-  <footer class="foot"><span id="verText"></span></footer>
+<div class="bar">Logistics Warehouse · One Source Inbound</div>
+<div class="card">
+  <h2 style="margin-top:0">One Source Inbound has moved</h2>
+  <p>It now lives inside the <b>Warehouse Toolkit</b>. Sign in with your employee ID and PTO PIN — there's no sync code anymore.</p>
+  <p>Loads you scanned in this app on this device are still there; they show up in the Toolkit's One Source Inbound screen.</p>
+  <a class="btn" href="https://nbr1hawgfan.github.io/LWH-Warehouse-Toolkit/?view=osInbound">Open One Source Inbound</a>
+  <p style="color:#666;font-size:14px">Taking you there in a few seconds…</p>
 </div>
-
-<!-- CAMERA OVERLAY -->
-<div id="camOverlay" class="cam-overlay" hidden>
-  <div class="cam-card">
-    <div class="cam-head"><strong id="camTitle">Scan</strong><button id="camClose" class="btn btn-small">Cancel</button></div>
-    <div id="camReader"></div>
-    <p class="hint" id="camHint">Hold the barcode flat and fill the box.</p>
-  </div>
-</div>
-
-<!-- PRINT AREA -->
-<div id="printArea" aria-hidden="true"></div>
-
-<script src="vendor/JsBarcode.code128.min.js"></script>
-<script src="vendor/html5-qrcode.min.js"></script>
-<script src="app.js"></script>
-<!-- LWH-USAGE-START: anonymous app-usage ping (see hub.logisticswarehouse.net/usage/) -->
 <script>
-(function () {
-  var APP = 'OneSource Inbound';
-  var URL_ = 'https://tjivcqxnkftujceumdtx.supabase.co/rest/v1/rpc/log_app_usage';
-  var KEY = 'sb_publishable_PYlWSW6-Gi-QZl91IXUq0Q_W5mO3sDT';
-  var ls = {}; try { ls = window.localStorage || {}; } catch (e) {}
-  function get(k) { try { return ls.getItem(k); } catch (e) { return null; } }
-  function set(k, v) { try { ls.setItem(k, v); } catch (e) {} }
-  var dev = get('lwhUsageDev');
-  if (!dev) { dev = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2)); set('lwhUsageDev', dev); }
-  var standalone = !!((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone);
-  function queue() { try { return JSON.parse(get('lwhUsageQ') || '[]'); } catch (e) { return []; } }
-  function send(row) {
-    return fetch(URL_, { method: 'POST', keepalive: true, headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(row) })
-      .then(function (r) { if (!r.ok) throw 0; });
-  }
-  function flush() {
-    var q = queue(); if (!q.length || !navigator.onLine) return;
-    set('lwhUsageQ', '[]');
-    q.forEach(function (row) { send(row).catch(function () { var r = queue(); r.push(row); set('lwhUsageQ', JSON.stringify(r.slice(-50))); }); });
-  }
-  function track(event) {
-    var row = { p_app: APP, p_event: event || 'open', p_device: dev, p_path: location.pathname, p_standalone: standalone, p_at: new Date().toISOString() };
-    send(row).then(flush).catch(function () { var q = queue(); q.push(row); set('lwhUsageQ', JSON.stringify(q.slice(-50))); });
-  }
-  window.lwhTrack = track; // optional: lwhTrack('bol_created') to count a feature
-  var last = Date.now(); track('open');
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && Date.now() - last > 30 * 60 * 1000) { last = Date.now(); track('open'); }
-  });
-  window.addEventListener('online', flush);
-})();
+  // drop this app's old offline copy so phones stop opening the old version
+  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => { if (r.scope.includes('OneSource-Inbound')) r.unregister(); })).catch(() => {});
+  if (window.caches) caches.keys().then(ks => ks.filter(k => k.startsWith('os-inbound-')).forEach(k => caches.delete(k))).catch(() => {});
 </script>
-<!-- LWH-USAGE-END -->
 </body>
 </html>
